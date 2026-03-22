@@ -1,8 +1,10 @@
 .chain {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
 .stageWrap {
@@ -39,8 +41,8 @@
 }
 
 .img {
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
 }
 

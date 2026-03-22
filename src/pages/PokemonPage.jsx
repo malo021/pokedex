@@ -75,7 +75,6 @@ export default function PokemonPage() {
 
   return (
     <div className={styles.page}>
-      {/* Back */}
       <button className={styles.back} onClick={() => navigate(-1)}>
         ← back
       </button>
@@ -194,6 +193,54 @@ export default function PokemonPage() {
   )
 }
 
+const LOCATION_BADGE_MAP = {
+  'pallet-town-area': 0, 'route-1-area': 0, 'route-2-area': 0,
+  'viridian-forest-area': 0, 'pewter-city-area': 1, 'route-3-area': 1,
+  'mt-moon-area': 1, 'cerulean-city-area': 2, 'route-4-area': 2,
+  'route-24-area': 2, 'route-25-area': 2, 'vermilion-city-area': 3,
+  'diglett-cave-area': 3, 'rock-tunnel-area': 3, 'lavender-town-area': 3,
+  'celadon-city-area': 4, 'safari-zone-area': 4, 'fuchsia-city-area': 5,
+  'seafoam-islands-area': 5, 'cinnabar-island-area': 7, 'victory-road-kanto-area': 8,
+  'twinleaf-town-area': 0, 'route-201-area': 0, 'route-202-area': 0,
+  'sandgem-town-area': 0, 'jubilife-city-area': 0, 'route-203-area': 0,
+  'oreburgh-gate-area': 0, 'oreburgh-city-area': 1, 'route-207-area': 1,
+  'route-204-area': 1, 'floaroma-town-area': 1, 'route-205-area': 2,
+  'eterna-forest-area': 2, 'eterna-city-area': 2, 'route-211-area': 2,
+  'mt-coronet-area': 2, 'route-206-area': 3, 'wayward-cave-area': 3,
+  'route-208-area': 3, 'hearthome-city-area': 4, 'route-209-area': 4,
+  'solaceon-town-area': 4, 'solaceon-ruins-area': 4, 'route-210-area': 4,
+  'celestic-town-area': 4, 'route-212-area': 5, 'pastoria-city-area': 5,
+  'great-marsh-area': 5, 'route-213-area': 5, 'route-214-area': 5,
+  'valor-lakefront-area': 5, 'route-215-area': 5, 'route-222-area': 6,
+  'sunyshore-city-area': 7, 'route-223-area': 7, 'victory-road-sinnoh-area': 8,
+}
+
+const GEN_VERSIONS = {
+  1: ['red','blue','yellow'],
+  2: ['gold','silver','crystal'],
+  3: ['ruby','sapphire','emerald','firered','leafgreen'],
+  4: ['diamond','pearl','platinum','heartgold','soulsilver'],
+  5: ['black','white','black-2','white-2'],
+  6: ['x','y','omega-ruby','alpha-sapphire'],
+  7: ['sun','moon','ultra-sun','ultra-moon'],
+  8: ['sword','shield','brilliant-diamond','shining-pearl','legends-arceus'],
+  9: ['scarlet','violet'],
+}
+
+const GEN_BADGE_LABELS = {
+  1: ['Boulder','Cascade','Thunder','Rainbow','Soul','Marsh','Volcano','Earth'],
+  4: ['Coal','Forest','Cobble','Fen','Relic','Mine','Icicle','Beacon'],
+}
+
+function getBadgeContext(locationName, gen) {
+  const badges = LOCATION_BADGE_MAP[locationName]
+  if (badges === undefined) return null
+  if (badges === 0) return 'from the start'
+  const names = GEN_BADGE_LABELS[gen]
+  if (names && names[badges - 1]) return `after ${badges}★ (${names[badges - 1]} Badge)`
+  return `after ${badges} badge${badges > 1 ? 's' : ''}`
+}
+
 function LocationsTab({ url, gen }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -209,25 +256,54 @@ function LocationsTab({ url, gen }) {
   if (loading) return <p className={styles.empty}>Loading locations...</p>
   if (!data || data.length === 0) return <p className={styles.empty}>No location data available.</p>
 
+  const versions = GEN_VERSIONS[gen] || []
   const filtered = data.filter(loc =>
-    loc.version_details.some(vd =>
-      vd.version.name.includes(gen === 1 ? 'red' : gen === 2 ? 'gold' : gen === 3 ? 'ruby' :
-        gen === 4 ? 'diamond' : gen === 5 ? 'black' : gen === 6 ? 'x' :
-        gen === 7 ? 'sun' : gen === 8 ? 'sword' : 'scarlet')
-    )
+    loc.version_details.some(vd => versions.includes(vd.version.name))
   )
 
-  if (filtered.length === 0) return <p className={styles.empty}>Not found in this generation.</p>
+  if (filtered.length === 0) return <p className={styles.empty}>Not found in Generation {gen} games.</p>
+
+  const sorted = [...filtered].sort((a, b) => {
+    const ba = LOCATION_BADGE_MAP[a.location_area.name] ?? 99
+    const bb = LOCATION_BADGE_MAP[b.location_area.name] ?? 99
+    return ba - bb
+  })
+
+  const earliest = sorted[0]
+  const hasEarliestData = LOCATION_BADGE_MAP[earliest.location_area.name] !== undefined
 
   return (
-    <div className={styles.locationList}>
-      {filtered.map(loc => (
-        <div key={loc.location_area.name} className={styles.locationRow}>
-          <span className={styles.locationName}>
-            {loc.location_area.name.replace(/-/g, ' ')}
-          </span>
+    <div>
+      {hasEarliestData && (
+        <div className={styles.earliestBox}>
+          <span className={styles.earliestLabel}>earliest obtainable</span>
+          <div className={styles.earliestContent}>
+            <span className={styles.earliestName}>{earliest.location_area.name.replace(/-/g, ' ')}</span>
+            <span className={styles.earliestBadge}>{getBadgeContext(earliest.location_area.name, gen)}</span>
+          </div>
         </div>
-      ))}
+      )}
+      <div className={styles.locationList}>
+        {sorted.map(loc => {
+          const badgeCtx = getBadgeContext(loc.location_area.name, gen)
+          const locVersions = loc.version_details
+            .filter(vd => versions.includes(vd.version.name))
+            .map(vd => vd.version.name)
+          return (
+            <div key={loc.location_area.name} className={styles.locationRow}>
+              <div className={styles.locationLeft}>
+                <span className={styles.locationName}>{loc.location_area.name.replace(/-/g, ' ')}</span>
+                {badgeCtx && <span className={styles.locationBadgeCtx}>{badgeCtx}</span>}
+              </div>
+              <div className={styles.locationVersions}>
+                {locVersions.map(v => (
+                  <span key={v} className={styles.locationVersion}>{v}</span>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
