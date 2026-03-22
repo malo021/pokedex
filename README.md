@@ -1,16 +1,41 @@
-# React + Vite
+Pokédex
+A clean, modern Pokédex built with React. Search any Pokémon, explore stats, moves, and locations filtered by generation, and compare two Pokémon side by side.
+Live at pokedex-zeta-blue.vercel.app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Features
+Search
 
-Currently, two official plugins are available:
+Search any Pokémon by name or number
+Landing page with a curated grid of popular Pokémon
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Pokémon detail view
 
-## React Compiler
+Base stats with colour-coded bars (red → orange → yellow → green → blue based on value)
+Typing, abilities (with hidden ability indicator), height, weight, catch rate
+Flavour text and evolution chain
+Save to favourites (stored in localStorage)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Moves
 
-## Expanding the ESLint configuration
+Level-up, TM/HM, and Move Tutor tabs
+Filtered by generation — only shows moves available in the selected gen
+Displays move type, damage category (physical / special / status), power, and accuracy
+HMs distinguished from TMs with a separate colour badge
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Locations
+
+Wild encounter locations filtered by generation and game version
+Badge progress context for Gens 1–5 (e.g. "after 2★ (Forest Badge)")
+Earliest obtainable location highlighted at the top
+Legendary Pokémon show their static encounter location per game, or "Trade from another game" if unavailable
+Pokémon only obtainable by evolution show "evolve [pre-evolution]"
+
+Compare
+
+Side-by-side stat comparison with visual bars highlighting the winner
+Individual generation filter per Pokémon (cross-gen comparison supported)
+Move comparison with shared move detection across all three move categories
+
+Favourites
+
+Save and remove Pokémon from a persistent favourites list
