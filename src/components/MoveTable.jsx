@@ -26,6 +26,11 @@ const CATEGORY_COLORS = {
   status:   { bg: '#1A1A2A', color: '#8A8AB8' },
 }
 
+const HM_MOVES = new Set([
+  'cut','fly','surf','strength','flash','whirlpool','waterfall','rock-smash',
+  'rock-climb','defog','dive','teleport','sweet-scent'
+])
+
 export default function MoveTable({ moves, gen, showLevel = false }) {
   const [moveData, setMoveData] = useState({})
   const fetching = useRef(new Set())
@@ -67,6 +72,7 @@ export default function MoveTable({ moves, gen, showLevel = false }) {
         <span className={styles.catHead}>cat</span>
         <span className={styles.pwrHead}>pwr</span>
         <span className={styles.accHead}>acc</span>
+        <span className={styles.hmHead}>—</span>
       </div>
       {moves.map(m => {
         const level = showLevel ? getMoveLevel(m, gen) : null
@@ -92,6 +98,12 @@ export default function MoveTable({ moves, gen, showLevel = false }) {
             </span>
             <span className={styles.pwrCell}>{data?.power ?? '—'}</span>
             <span className={styles.accCell}>{data?.accuracy ? `${data.accuracy}%` : '—'}</span>
+            <span className={styles.hmCell}>
+              {HM_MOVES.has(m.move.name)
+                ? <span className={styles.hmBadge}>HM</span>
+                : <span className={styles.tmBadge}>TM</span>
+              }
+            </span>
           </div>
         )
       })}

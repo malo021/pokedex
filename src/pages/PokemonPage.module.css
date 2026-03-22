@@ -270,3 +270,28 @@
   color: var(--text-muted);
   text-transform: capitalize;
 }
+
+.evolveBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.evolveLabel {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.evolveName {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
